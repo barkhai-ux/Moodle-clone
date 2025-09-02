@@ -1,0 +1,9 @@
+# Override global ignore settings
+# Allow .env files for development
+!.env
+!.env.example
+!.env.local.example
+
+# Still ignore sensitive files
+.env.production
+.env.staging

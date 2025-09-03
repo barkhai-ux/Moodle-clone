@@ -21,6 +21,8 @@ import {
   Users,
   ClipboardList,
   FileText,
+  User,
+  Briefcase,
 } from 'lucide-react';
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -33,6 +35,14 @@ export function Navigation({ currentPage }: NavigationProps) {
   const { user, logout } = useAuth();
 
   if (!user) return null;
+
+  const adminNavItems = [
+    { href: '/dashboard', icon: Home, label: 'Dashboard', key: 'dashboard' },
+    { href: '/admin/degree-audit', icon: FileText, label: 'Degree Audit', key: 'degree-audit' },
+    { href: '/admin/users', icon: Users, label: 'All Users', key: 'users' },
+    { href: '/admin/courses', icon: BookOpen, label: 'All Courses', key: 'courses' },
+    { href: '/admin/grades', icon: BarChart3, label: 'All Grades', key: 'grades' },
+  ];
 
   const teacherNavItems = [
     { href: '/dashboard', icon: Home, label: 'Dashboard', key: 'dashboard' },
@@ -51,8 +61,32 @@ export function Navigation({ currentPage }: NavigationProps) {
     { href: '/grades', icon: BarChart3, label: 'My Grades', key: 'grades' },
   ];
 
-  const navItems = user.role === 'teacher' ? teacherNavItems : studentNavItems;
-  const themeColor = user.role === 'teacher' ? 'bg-blue-600 dark:bg-blue-700' : 'bg-teal-600 dark:bg-teal-700';
+  const getNavItems = () => {
+    switch (user.role) {
+      case 'ADMIN':
+        return adminNavItems;
+      case 'TEACHER':
+        return teacherNavItems;
+      case 'STUDENT':
+      default:
+        return studentNavItems;
+    }
+  };
+
+  const getThemeColor = () => {
+    switch (user.role) {
+      case 'ADMIN':
+        return 'bg-red-600 dark:bg-red-700';
+      case 'TEACHER':
+        return 'bg-blue-600 dark:bg-blue-700';
+      case 'STUDENT':
+      default:
+        return 'bg-teal-600 dark:bg-teal-700';
+    }
+  };
+
+  const navItems = getNavItems();
+  const themeColor = getThemeColor();
 
   return (
     <nav className={`${themeColor} text-white shadow-lg dark:shadow-gray-900/20`}>
@@ -109,6 +143,23 @@ export function Navigation({ currentPage }: NavigationProps) {
                   </div>
                 </div>
                 <DropdownMenuSeparator />
+                {user.role === 'STUDENT' && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile" className="flex items-center">
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Profile</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/portfolio" className="flex items-center">
+                        <Briefcase className="mr-2 h-4 w-4" />
+                        <span>Portfolio</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 <DropdownMenuItem>
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Settings</span>

@@ -59,6 +59,7 @@ async function main() {
       coverImage: 'https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg',
       credits: 3,
       capacity: 30,
+      classNumber: 'CS101',
       instructorId: teacher.id,
     },
   });
@@ -73,6 +74,7 @@ async function main() {
       coverImage: 'https://images.pexels.com/photos/590570/pexels-photo-590570.jpeg',
       credits: 4,
       capacity: 25,
+      classNumber: 'MATH201',
       instructorId: teacher.id,
     },
   });
@@ -87,6 +89,7 @@ async function main() {
       coverImage: 'https://images.pexels.com/photos/4164418/pexels-photo-4164418.jpeg',
       credits: 3,
       capacity: 25,
+      classNumber: 'CS201',
       instructorId: teacher.id,
     },
   });
@@ -101,6 +104,7 @@ async function main() {
       coverImage: 'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg',
       credits: 4,
       capacity: 20,
+      classNumber: 'CS301',
       instructorId: teacher.id,
     },
   });

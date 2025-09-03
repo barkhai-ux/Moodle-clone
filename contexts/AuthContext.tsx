@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '@/types';
 import { AuthService } from '@/lib/auth';
+import { DataService } from '@/lib/data-service';
 import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
@@ -13,6 +14,7 @@ interface AuthContextType {
   enrolledCourses: string[];
   enrollInCourse: (courseId: string) => void;
   dropCourse: (courseId: string) => void;
+  updateAvatar: (avatarUrl: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -112,6 +114,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateAvatar = async (avatarUrl: string) => {
+    if (!user) return;
+    
+    try {
+      const updatedUser = await DataService.updateUserProfile({ avatar: avatarUrl }, user.id);
+      if (updatedUser) {
+        setUser(updatedUser);
+      }
+    } catch (error) {
+      console.error('Error updating avatar:', error);
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -120,7 +136,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loading, 
       enrolledCourses, 
       enrollInCourse, 
-      dropCourse 
+      dropCourse,
+      updateAvatar
     }}>
       {children}
     </AuthContext.Provider>

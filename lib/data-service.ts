@@ -89,4 +89,42 @@ export class DataService {
       return null;
     }
   }
+
+  static async updateUserProfile(updates: { avatar?: string }, userId: string): Promise<User | null> {
+    try {
+      const response = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...updates, userId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      const updatedUser = await response.json();
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      return null;
+    }
+  }
+
+  static async getUserProfile(userId: string): Promise<User | null> {
+    try {
+      const response = await fetch(`/api/user/profile?userId=${userId}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch profile');
+      }
+
+      const user = await response.json();
+      return user;
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      return null;
+    }
+  }
 }

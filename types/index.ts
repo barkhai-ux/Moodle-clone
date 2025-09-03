@@ -19,6 +19,7 @@ export interface Course {
   schedule?: CourseSchedule;
   credits?: number;
   capacity?: number;
+  classNumber?: string;
   prerequisites?: string[];
 }
 

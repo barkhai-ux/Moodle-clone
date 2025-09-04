@@ -61,6 +61,7 @@ async function main() {
       capacity: 30,
       classNumber: 'CS101',
       instructorId: teacher.id,
+      isAvailableForEnrollment: true,
     },
   });
 
@@ -76,6 +77,7 @@ async function main() {
       capacity: 25,
       classNumber: 'MATH201',
       instructorId: teacher.id,
+      isAvailableForEnrollment: true,
     },
   });
 
@@ -91,6 +93,7 @@ async function main() {
       capacity: 25,
       classNumber: 'CS201',
       instructorId: teacher.id,
+      isAvailableForEnrollment: false,
     },
   });
 
@@ -106,6 +109,7 @@ async function main() {
       capacity: 20,
       classNumber: 'CS301',
       instructorId: teacher.id,
+      isAvailableForEnrollment: true,
     },
   });
 

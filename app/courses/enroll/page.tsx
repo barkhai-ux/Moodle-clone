@@ -17,7 +17,7 @@ export default function CourseEnrollmentPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const fetchedCourses = await DataService.getCourses();
+        const fetchedCourses = await DataService.getAvailableCourses();
         setCourses(fetchedCourses);
       } catch (error) {
         console.error('Error fetching courses:', error);

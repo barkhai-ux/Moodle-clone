@@ -20,6 +20,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { Course, Assignment, Announcement } from '@/types';
+import Link from 'next/link';
 
 interface CoursePageProps {
   params: { id: string };
@@ -32,6 +33,7 @@ export default function CoursePage({ params }: CoursePageProps) {
   const [courseAssignments, setCourseAssignments] = useState<Assignment[]>([]);
   const [courseAnnouncements, setCourseAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,11 +132,21 @@ export default function CoursePage({ params }: CoursePageProps) {
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="w-full lg:w-64 h-36 bg-gray-200 rounded-lg overflow-hidden">
-              <img 
-                src={course.coverImage} 
-                alt={course.title}
-                className="w-full h-full object-cover"
-              />
+              {course.coverImage && !imageError ? (
+                <img 
+                  src={course.coverImage} 
+                  alt={course.title}
+                  className="w-full h-full object-cover"
+                  onError={() => setImageError(true)}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+                  <div className="text-center text-white">
+                    <div className="text-2xl font-bold mb-1">{course.title.charAt(0).toUpperCase()}</div>
+                    <div className="text-xs font-medium opacity-90">{course.title}</div>
+                  </div>
+                </div>
+              )}
             </div>
             
             <div className="flex-1">
@@ -156,10 +168,12 @@ export default function CoursePage({ params }: CoursePageProps) {
                 </div>
                 
                 {isTeacher && (
-                  <Button variant="outline">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Course Settings
-                  </Button>
+                  <Link href={`/courses/${course.id}/manage`}>
+                    <Button variant="outline">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Course Settings
+                    </Button>
+                  </Link>
                 )}
               </div>
               

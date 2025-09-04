@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Course } from '@/types';
 import {
   Dialog,
@@ -44,6 +44,7 @@ export function CourseEnrollmentDialog({
   onEnrollmentAction,
   isEnrolled
 }: CourseEnrollmentDialogProps) {
+  const [imageError, setImageError] = useState(false);
   const isFull = course.enrolledStudents.length >= (course.capacity || 0);
   const canEnroll = !isEnrolled && !isFull;
 
@@ -77,15 +78,23 @@ export function CourseEnrollmentDialog({
 
         <div className="space-y-6">
           {/* Course Image */}
-          {course.coverImage && (
-            <div className="relative h-48 w-full rounded-lg overflow-hidden">
+          <div className="relative h-48 w-full rounded-lg overflow-hidden">
+            {course.coverImage && !imageError ? (
               <img
                 src={course.coverImage}
                 alt={course.title}
                 className="w-full h-full object-cover"
+                onError={() => setImageError(true)}
               />
-            </div>
-          )}
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+                <div className="text-center text-white">
+                  <div className="text-3xl font-bold mb-2">{course.title.charAt(0).toUpperCase()}</div>
+                  <div className="text-sm font-medium opacity-90">{course.title}</div>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Course Status */}
           <div className="flex items-center space-x-2">

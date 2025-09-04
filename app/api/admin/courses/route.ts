@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@/generated/prisma';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Add admin authentication check
-    
     const courses = await prisma.course.findMany({
       include: {
         instructor: {
@@ -14,6 +10,7 @@ export async function GET(request: NextRequest) {
             id: true,
             name: true,
             email: true,
+            role: true,
           },
         },
         enrollments: {
@@ -27,30 +24,19 @@ export async function GET(request: NextRequest) {
             },
           },
         },
-        schedule: true,
+        _count: {
+          select: {
+            enrollments: true,
+            assignments: true,
+          },
+        },
       },
       orderBy: {
-        title: 'asc',
+        createdAt: 'desc',
       },
     });
 
-    // Transform the data to match the expected format
-    const transformedCourses = courses.map((course) => ({
-      id: course.id,
-      title: course.title,
-      description: course.description,
-      instructor: course.instructor,
-      enrolledStudents: course.enrollments.map((enrollment) => enrollment.student),
-      coverImage: course.coverImage,
-      createdAt: course.createdAt.toISOString(),
-      updatedAt: course.updatedAt.toISOString(),
-      credits: course.credits,
-      capacity: course.capacity,
-      classNumber: course.classNumber,
-      schedule: course.schedule,
-    }));
-
-    return NextResponse.json({ courses: transformedCourses });
+    return NextResponse.json({ courses });
   } catch (error) {
     console.error('Error fetching courses:', error);
     return NextResponse.json(

@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { Navigation } from '@/components/layout/Navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { CourseManagement } from '@/components/courses/CourseManagement';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminCoursesPage() {
@@ -29,36 +28,14 @@ export default function AdminCoursesPage() {
       <Navigation currentPage="courses" />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Course Management</h1>
-              <p className="text-gray-600 dark:text-gray-300">
-                View and manage all courses in the system
-              </p>
-            </div>
-            <Button>Add Course</Button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Course Management</h1>
+            <p className="text-gray-600 dark:text-gray-300">
+              Manage which courses are available for student enrollment
+            </p>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>All Courses</CardTitle>
-              <CardDescription>View and manage courses across the system</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <p>Course management interface will be implemented here.</p>
-                <p>Features will include:</p>
-                <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
-                  <li>View all courses with instructor information</li>
-                  <li>See enrollment numbers for each course</li>
-                  <li>Add new courses and assign instructors</li>
-                  <li>Edit course details and requirements</li>
-                  <li>Manage course schedules and capacity</li>
-                  <li>View course analytics and performance</li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
+          <CourseManagement />
         </div>
       </main>
     </div>

@@ -6,11 +6,17 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const instructorId = searchParams.get('instructorId');
     const studentId = searchParams.get('studentId');
+    const available = searchParams.get('available');
 
     let whereClause = {};
 
     if (instructorId) {
-      whereClause = { instructorId };
+      whereClause = { ...whereClause, instructorId };
+    }
+
+    // Filter by availability if requested
+    if (available === 'true') {
+      whereClause = { ...whereClause, isAvailableForEnrollment: true };
     }
 
     const courses = await prisma.course.findMany({
@@ -53,6 +59,7 @@ export async function GET(request: NextRequest) {
       schedule: course.schedule,
       credits: course.credits,
       capacity: course.capacity,
+      isAvailableForEnrollment: course.isAvailableForEnrollment,
       prerequisites: [], // This would need to be implemented with a separate table
     }));
 

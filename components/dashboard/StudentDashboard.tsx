@@ -39,6 +39,7 @@ export function StudentDashboard() {
   const [grades, setGrades] = useState<Grade[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -363,11 +364,21 @@ export function StudentDashboard() {
                   <Card key={course.id} className="hover:shadow-md transition-shadow cursor-pointer">
                     <CardContent className="p-4">
                       <div className="aspect-video bg-gray-200 rounded-lg mb-3 overflow-hidden">
-                        <img 
-                          src={course.coverImage} 
-                          alt={course.title}
-                          className="w-full h-full object-cover"
-                        />
+                        {course.coverImage && !imageErrors.has(course.id) ? (
+                          <img 
+                            src={course.coverImage} 
+                            alt={course.title}
+                            className="w-full h-full object-cover"
+                            onError={() => setImageErrors(prev => new Set(prev).add(course.id))}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+                            <div className="text-center text-white">
+                              <div className="text-2xl font-bold mb-1">{course.title.charAt(0).toUpperCase()}</div>
+                              <div className="text-xs font-medium opacity-90">{course.title}</div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                       <h3 className="font-semibold text-gray-900 mb-2">{course.title}</h3>
                       <p className="text-sm text-gray-600 mb-3 line-clamp-2">{course.description}</p>
@@ -560,11 +571,21 @@ export function StudentDashboard() {
                         <Card key={course.id} className="hover:shadow-lg transition-shadow">
                           <CardContent className="p-6">
                             <div className="aspect-video bg-gray-200 rounded-lg mb-4 overflow-hidden">
-                              <img 
-                                src={course.coverImage || '/placeholder-course.jpg'} 
-                                alt={course.title}
-                                className="w-full h-full object-cover"
-                              />
+                              {course.coverImage && !imageErrors.has(course.id) ? (
+                                <img 
+                                  src={course.coverImage} 
+                                  alt={course.title}
+                                  className="w-full h-full object-cover"
+                                  onError={() => setImageErrors(prev => new Set(prev).add(course.id))}
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+                                  <div className="text-center text-white">
+                                    <div className="text-2xl font-bold mb-1">{course.title.charAt(0).toUpperCase()}</div>
+                                    <div className="text-xs font-medium opacity-90">{course.title}</div>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                             <h3 className="font-semibold text-gray-900 mb-2">{course.title}</h3>
                             <p className="text-sm text-gray-600 mb-4 line-clamp-3">{course.description}</p>
@@ -784,11 +805,21 @@ export function StudentDashboard() {
                         <Card key={course.id} className="hover:shadow-md transition-shadow">
                           <CardContent className="p-4">
                             <div className="aspect-video bg-gray-200 rounded-lg mb-3 overflow-hidden">
-                              <img 
-                                src={course.coverImage || '/placeholder-course.jpg'} 
-                                alt={course.title}
-                                className="w-full h-full object-cover"
-                              />
+                              {course.coverImage && !imageErrors.has(course.id) ? (
+                                <img 
+                                  src={course.coverImage} 
+                                  alt={course.title}
+                                  className="w-full h-full object-cover"
+                                  onError={() => setImageErrors(prev => new Set(prev).add(course.id))}
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+                                  <div className="text-center text-white">
+                                    <div className="text-2xl font-bold mb-1">{course.title.charAt(0).toUpperCase()}</div>
+                                    <div className="text-xs font-medium opacity-90">{course.title}</div>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                             <h3 className="font-semibold text-gray-900 mb-2">{course.title}</h3>
                             <p className="text-sm text-gray-600 mb-3 line-clamp-2">{course.description}</p>

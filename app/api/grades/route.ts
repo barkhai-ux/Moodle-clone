@@ -11,10 +11,10 @@ export async function GET(request: NextRequest) {
     let whereClause = {};
 
     if (studentId) {
-      whereClause = { studentId };
+      whereClause = { ...whereClause, studentId };
     }
     if (courseId) {
-      whereClause = { ...whereClause, assignment: { courseId } };
+      whereClause = { ...whereClause, courseId };
     }
     if (assignmentId) {
       whereClause = { ...whereClause, assignmentId };
@@ -23,21 +23,24 @@ export async function GET(request: NextRequest) {
     const grades = await prisma.grade.findMany({
       where: whereClause,
       include: {
-        assignment: {
-          include: {
-            course: {
-              select: {
-                id: true,
-                title: true,
-              },
-            },
-          },
-        },
         student: {
           select: {
             id: true,
             name: true,
             email: true,
+          },
+        },
+        assignment: {
+          select: {
+            id: true,
+            title: true,
+            maxPoints: true,
+          },
+        },
+        course: {
+          select: {
+            id: true,
+            title: true,
           },
         },
       },
@@ -46,19 +49,89 @@ export async function GET(request: NextRequest) {
     const transformedGrades = grades.map(grade => ({
       id: grade.id,
       studentId: grade.studentId,
-      courseId: grade.assignment.course.id,
+      courseId: grade.courseId,
       assignmentId: grade.assignmentId,
       points: grade.points,
       maxPoints: grade.maxPoints,
       feedback: grade.feedback,
-      gradedAt: grade.gradedAt.toISOString(),
-      assignment: grade.assignment,
+      createdAt: grade.createdAt.toISOString(),
       student: grade.student,
+      assignment: grade.assignment,
+      course: grade.course,
     }));
 
     return NextResponse.json({ grades: transformedGrades });
   } catch (error) {
     console.error('Error fetching grades:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { studentId, courseId, assignmentId, points, maxPoints, feedback } = body;
+
+    if (!studentId || !courseId || !assignmentId || points === undefined || !maxPoints) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    const grade = await prisma.grade.create({
+      data: {
+        studentId,
+        courseId,
+        assignmentId,
+        points: parseInt(points),
+        maxPoints: parseInt(maxPoints),
+        feedback,
+      },
+      include: {
+        student: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        assignment: {
+          select: {
+            id: true,
+            title: true,
+            maxPoints: true,
+          },
+        },
+        course: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
+    });
+
+    const transformedGrade = {
+      id: grade.id,
+      studentId: grade.studentId,
+      courseId: grade.courseId,
+      assignmentId: grade.assignmentId,
+      points: grade.points,
+      maxPoints: grade.maxPoints,
+      feedback: grade.feedback,
+      createdAt: grade.createdAt.toISOString(),
+      student: grade.student,
+      assignment: grade.assignment,
+      course: grade.course,
+    };
+
+    return NextResponse.json({ grade: transformedGrade });
+  } catch (error) {
+    console.error('Error creating grade:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

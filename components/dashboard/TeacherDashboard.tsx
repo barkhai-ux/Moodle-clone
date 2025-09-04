@@ -9,10 +9,14 @@ import {
   Users, 
   ClipboardList, 
   TrendingUp,
-  Plus,
   Calendar,
   FileText,
   Star,
+  Settings,
+  Plus,
+  MessageSquare,
+  Upload,
+  BarChart3,
 } from 'lucide-react';
 import { DataService } from '@/lib/data-service';
 import { useAuth } from '@/contexts/AuthContext';
@@ -131,10 +135,6 @@ export function TeacherDashboard() {
           </CardHeader>
           <CardContent className="space-y-3">
             <Button className="w-full justify-start" variant="outline">
-              <Plus className="mr-2 h-4 w-4" />
-              Create New Course
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
               <ClipboardList className="mr-2 h-4 w-4" />
               Create Assignment
             </Button>
@@ -145,6 +145,10 @@ export function TeacherDashboard() {
             <Button className="w-full justify-start" variant="outline">
               <Calendar className="mr-2 h-4 w-4" />
               Schedule Announcement
+            </Button>
+            <Button className="w-full justify-start" variant="outline">
+              <Upload className="mr-2 h-4 w-4" />
+              Upload Materials
             </Button>
           </CardContent>
         </Card>
@@ -192,13 +196,9 @@ export function TeacherDashboard() {
             <BookOpen className="w-5 h-5 text-blue-500" />
             <span>My Courses</span>
           </CardTitle>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            New Course
-          </Button>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {courses.map((course) => (
               <Card key={course.id} className="hover:shadow-md transition-shadow cursor-pointer border border-gray-200">
                 <CardContent className="p-4">
@@ -211,14 +211,47 @@ export function TeacherDashboard() {
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-2">{course.title}</h3>
                   <p className="text-sm text-gray-600 mb-3 line-clamp-2">{course.description}</p>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-2">
                       <Users className="w-4 h-4 text-gray-400" />
                       <span className="text-sm text-gray-600">{course.enrolledStudents.length} students</span>
                     </div>
+                  </div>
+                  
+                  {/* Course Management Actions */}
+                  <div className="grid grid-cols-2 gap-2">
                     <Link href={`/courses/${course.id}`}>
-                      <Button size="sm">
+                      <Button size="sm" className="w-full">
+                        <BookOpen className="mr-1 h-3 w-3" />
+                        View
+                      </Button>
+                    </Link>
+                    <Link href={`/courses/${course.id}/manage`}>
+                      <Button size="sm" variant="outline" className="w-full">
+                        <Settings className="mr-1 h-3 w-3" />
                         Manage
+                      </Button>
+                    </Link>
+                  </div>
+                  
+                  {/* Quick Action Buttons */}
+                  <div className="grid grid-cols-3 gap-1 mt-2">
+                    <Link href={`/courses/${course.id}/assignments`}>
+                      <Button size="sm" variant="ghost" className="w-full text-xs">
+                        <ClipboardList className="mr-1 h-3 w-3" />
+                        Assign
+                      </Button>
+                    </Link>
+                    <Link href={`/courses/${course.id}/grades`}>
+                      <Button size="sm" variant="ghost" className="w-full text-xs">
+                        <BarChart3 className="mr-1 h-3 w-3" />
+                        Grades
+                      </Button>
+                    </Link>
+                    <Link href={`/courses/${course.id}/announcements`}>
+                      <Button size="sm" variant="ghost" className="w-full text-xs">
+                        <MessageSquare className="mr-1 h-3 w-3" />
+                        Announce
                       </Button>
                     </Link>
                   </div>

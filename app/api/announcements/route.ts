@@ -58,3 +58,60 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { courseId, title, content, authorId } = body;
+
+    if (!courseId || !title || !content || !authorId) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    const announcement = await prisma.announcement.create({
+      data: {
+        courseId,
+        title,
+        content,
+        authorId,
+      },
+      include: {
+        course: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    const transformedAnnouncement = {
+      id: announcement.id,
+      courseId: announcement.courseId,
+      title: announcement.title,
+      content: announcement.content,
+      authorId: announcement.authorId,
+      createdAt: announcement.createdAt.toISOString(),
+      course: announcement.course,
+      author: announcement.author,
+    };
+
+    return NextResponse.json({ announcement: transformedAnnouncement });
+  } catch (error) {
+    console.error('Error creating announcement:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

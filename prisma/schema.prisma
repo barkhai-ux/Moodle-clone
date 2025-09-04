@@ -29,6 +29,7 @@ model User {
   submissions       Submission[]
   grades            Grade[]
   announcements     Announcement[]
+  courseMaterials   CourseMaterial[]
 
   @@map("users")
 }
@@ -41,6 +42,7 @@ model Course {
   credits     Int      @default(3)
   capacity    Int?
   classNumber String?
+  isAvailableForEnrollment Boolean @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -52,6 +54,7 @@ model Course {
   announcements Announcement[]
   schedule     CourseSchedule?
   requirements CourseRequirement[]
+  materials    CourseMaterial[]
 
   @@map("courses")
 }
@@ -153,6 +156,25 @@ model Announcement {
   author User   @relation(fields: [authorId], references: [id])
 
   @@map("announcements")
+}
+
+model CourseMaterial {
+  id          String   @id @default(cuid())
+  courseId    String
+  title       String
+  description String?
+  fileName    String
+  fileSize    Int
+  fileType    String
+  fileUrl     String
+  uploadedBy  String
+  uploadedAt  DateTime @default(now())
+
+  // Relations
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  uploader User @relation(fields: [uploadedBy], references: [id])
+
+  @@map("course_materials")
 }
 
 model DegreeProgram {

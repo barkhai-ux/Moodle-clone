@@ -21,6 +21,7 @@ export interface Course {
   capacity?: number;
   classNumber?: string;
   prerequisites?: string[];
+  isAvailableForEnrollment?: boolean;
 }
 
 export interface CourseSchedule {
@@ -68,6 +69,19 @@ export interface Announcement {
   content: string;
   authorId: string;
   createdAt: string;
+}
+
+export interface CourseMaterial {
+  id: string;
+  courseId: string;
+  title: string;
+  description?: string;
+  fileName: string;
+  fileSize: number;
+  fileType: string;
+  fileUrl: string;
+  uploadedBy: string;
+  uploadedAt: string;
 }
 
 export interface DegreeRequirement {

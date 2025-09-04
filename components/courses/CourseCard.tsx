@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -16,16 +16,27 @@ interface CourseCardProps {
 export function CourseCard({ course }: CourseCardProps) {
   const { user } = useAuth();
   const isTeacher = user?.role === 'teacher';
+  const [imageError, setImageError] = useState(false);
 
   return (
     <Card className="hover:shadow-lg transition-all duration-200 group cursor-pointer">
       <CardContent className="p-0">
         <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 rounded-t-lg overflow-hidden">
-          <img 
-            src={course.coverImage} 
-            alt={course.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-          />
+          {course.coverImage && !imageError ? (
+            <img 
+              src={course.coverImage} 
+              alt={course.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+              <div className="text-center text-white">
+                <div className="text-2xl font-bold mb-1">{course.title.charAt(0).toUpperCase()}</div>
+                <div className="text-xs font-medium opacity-90">{course.title}</div>
+              </div>
+            </div>
+          )}
         </div>
         
         <div className="p-4 space-y-3">

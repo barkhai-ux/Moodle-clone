@@ -35,12 +35,12 @@ export async function GET(request: NextRequest) {
             id: true,
             title: true,
             maxPoints: true,
-          },
-        },
-        course: {
-          select: {
-            id: true,
-            title: true,
+            course: {
+              select: {
+                id: true,
+                title: true,
+              },
+            },
           },
         },
       },
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     const transformedGrades = grades.map(grade => ({
       id: grade.id,
       studentId: grade.studentId,
-      courseId: grade.courseId,
+      courseId: grade.assignment.course.id,
       assignmentId: grade.assignmentId,
       points: grade.points,
       maxPoints: grade.maxPoints,
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
       createdAt: grade.createdAt.toISOString(),
       student: grade.student,
       assignment: grade.assignment,
-      course: grade.course,
+      course: grade.assignment.course,
     }));
 
     return NextResponse.json({ grades: transformedGrades });
@@ -85,7 +85,6 @@ export async function POST(request: NextRequest) {
     const grade = await prisma.grade.create({
       data: {
         studentId,
-        courseId,
         assignmentId,
         points: parseInt(points),
         maxPoints: parseInt(maxPoints),
@@ -104,12 +103,12 @@ export async function POST(request: NextRequest) {
             id: true,
             title: true,
             maxPoints: true,
-          },
-        },
-        course: {
-          select: {
-            id: true,
-            title: true,
+            course: {
+              select: {
+                id: true,
+                title: true,
+              },
+            },
           },
         },
       },
@@ -118,7 +117,7 @@ export async function POST(request: NextRequest) {
     const transformedGrade = {
       id: grade.id,
       studentId: grade.studentId,
-      courseId: grade.courseId,
+      courseId: grade.assignment.course.id,
       assignmentId: grade.assignmentId,
       points: grade.points,
       maxPoints: grade.maxPoints,
@@ -126,7 +125,7 @@ export async function POST(request: NextRequest) {
       createdAt: grade.createdAt.toISOString(),
       student: grade.student,
       assignment: grade.assignment,
-      course: grade.course,
+      course: grade.assignment.course,
     };
 
     return NextResponse.json({ grade: transformedGrade });

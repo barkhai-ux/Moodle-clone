@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
             },
           },
         },
-        schedule: true,
+        schedules: true,
       },
     });
 
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
       coverImage: course.coverImage,
       createdAt: course.createdAt.toISOString(),
       updatedAt: course.updatedAt.toISOString(),
-      schedule: course.schedule,
+      schedules: course.schedules,
       credits: course.credits,
       capacity: course.capacity,
       isAvailableForEnrollment: course.isAvailableForEnrollment,

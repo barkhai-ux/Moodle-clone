@@ -2,8 +2,10 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNotifications } from '@/contexts/NotificationContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { NotificationBadge } from '@/components/ui/notification-badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +25,7 @@ import {
   FileText,
   User,
   Briefcase,
+  MessageSquare,
 } from 'lucide-react';
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -33,6 +36,7 @@ interface NavigationProps {
 
 export function Navigation({ currentPage }: NavigationProps) {
   const { user, logout } = useAuth();
+  const { totalUnreadCount } = useNotifications();
 
   if (!user) return null;
 
@@ -50,6 +54,7 @@ export function Navigation({ currentPage }: NavigationProps) {
     { href: '/students', icon: Users, label: 'Students', key: 'students' },
     { href: '/assignments', icon: ClipboardList, label: 'Assignments', key: 'assignments' },
     { href: '/grades', icon: BarChart3, label: 'Grades', key: 'grades' },
+    { href: '/chat', icon: MessageSquare, label: 'Chat', key: 'chat' },
   ];
 
   const studentNavItems = [
@@ -59,6 +64,7 @@ export function Navigation({ currentPage }: NavigationProps) {
     { href: '/degree-audit', icon: FileText, label: 'Degree Audit', key: 'degree-audit' },
     { href: '/assignments', icon: ClipboardList, label: 'Assignments', key: 'assignments' },
     { href: '/grades', icon: BarChart3, label: 'My Grades', key: 'grades' },
+    { href: '/chat', icon: MessageSquare, label: 'Chat', key: 'chat' },
   ];
 
   const getNavItems = () => {
@@ -105,7 +111,7 @@ export function Navigation({ currentPage }: NavigationProps) {
                   <Link
                     key={item.key}
                     href={item.href}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative ${
                       isActive
                         ? 'bg-white/20'
                         : 'hover:bg-white/10'
@@ -113,6 +119,9 @@ export function Navigation({ currentPage }: NavigationProps) {
                   >
                     <item.icon className="w-4 h-4" />
                     <span>{item.label}</span>
+                    {item.key === 'chat' && totalUnreadCount > 0 && (
+                      <NotificationBadge count={totalUnreadCount} size="sm" />
+                    )}
                   </Link>
                 );
               })}

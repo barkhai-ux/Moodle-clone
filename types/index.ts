@@ -16,7 +16,7 @@ export interface Course {
   coverImage?: string;
   createdAt: string;
   updatedAt: string;
-  schedule?: CourseSchedule;
+  schedules?: CourseSchedule[];
   credits?: number;
   capacity?: number;
   classNumber?: string;
@@ -100,4 +100,38 @@ export interface DegreeProgram {
   totalCreditsRequired: number;
   requirements: DegreeRequirement[];
   description?: string;
+}
+
+export interface ChatRoom {
+  id: string;
+  name: string;
+  type: 'DIRECT' | 'GROUP' | 'COURSE';
+  courseId?: string;
+  createdAt: string;
+  updatedAt: string;
+  course?: Course;
+  members: ChatMember[];
+  messages: ChatMessage[];
+}
+
+export interface ChatMember {
+  id: string;
+  userId: string;
+  chatId: string;
+  joinedAt: string;
+  isActive: boolean;
+  user: User;
+  chat: ChatRoom;
+}
+
+export interface ChatMessage {
+  id: string;
+  chatId: string;
+  senderId: string;
+  content: string;
+  messageType: 'TEXT' | 'FILE' | 'IMAGE';
+  createdAt: string;
+  updatedAt: string;
+  sender: User;
+  chat: ChatRoom;
 }

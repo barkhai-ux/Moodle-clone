@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
             },
           },
         },
+        schedules: true,
         _count: {
           select: {
             enrollments: true,
@@ -36,7 +37,24 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ courses });
+    // Transform the data to match the expected format
+    const transformedCourses = courses.map(course => ({
+      id: course.id,
+      title: course.title,
+      description: course.description,
+      instructor: course.instructor,
+      enrolledStudents: course.enrollments.map(enrollment => enrollment.student),
+      coverImage: course.coverImage,
+      createdAt: course.createdAt.toISOString(),
+      updatedAt: course.updatedAt.toISOString(),
+      schedules: course.schedules,
+      credits: course.credits,
+      capacity: course.capacity,
+      classNumber: course.classNumber,
+      isAvailableForEnrollment: course.isAvailableForEnrollment,
+    }));
+
+    return NextResponse.json({ courses: transformedCourses });
   } catch (error) {
     console.error('Error fetching courses:', error);
     return NextResponse.json(
@@ -83,7 +101,7 @@ export async function POST(request: NextRequest) {
         capacity: capacity || null,
         coverImage: coverImage || null,
         classNumber: classNumber || null,
-        schedule: schedule ? {
+        schedules: schedule ? {
           create: {
             dayOfWeek: schedule.dayOfWeek,
             startTime: schedule.startTime,
@@ -100,7 +118,7 @@ export async function POST(request: NextRequest) {
             email: true,
           },
         },
-        schedule: true,
+        schedules: true,
       },
     });
 

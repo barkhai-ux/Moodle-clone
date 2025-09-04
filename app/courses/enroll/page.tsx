@@ -17,8 +17,21 @@ export default function CourseEnrollmentPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const fetchedCourses = await DataService.getAvailableCourses();
-        setCourses(fetchedCourses);
+        // Get all courses (both available and enrolled)
+        const [availableCourses, enrolledCoursesData] = await Promise.all([
+          DataService.getAvailableCourses(),
+          DataService.getCourses({ studentId: user?.id })
+        ]);
+        
+        // Combine available courses with enrolled courses, avoiding duplicates
+        const allCourses = [...availableCourses];
+        enrolledCoursesData.forEach(enrolledCourse => {
+          if (!allCourses.find(course => course.id === enrolledCourse.id)) {
+            allCourses.push(enrolledCourse);
+          }
+        });
+        
+        setCourses(allCourses);
       } catch (error) {
         console.error('Error fetching courses:', error);
       } finally {
@@ -27,7 +40,7 @@ export default function CourseEnrollmentPage() {
     };
 
     fetchData();
-  }, []);
+  }, [user?.id]);
 
   const handleEnrollmentChange = (courseId: string, action: 'enroll' | 'drop') => {
     if (action === 'enroll') {

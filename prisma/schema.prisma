@@ -1,9 +1,6 @@
-// This is your Prisma schema file for the Moodle Clone LMS
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -11,132 +8,120 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String
-  role      Role     @default(STUDENT)
-  avatar    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  taughtCourses     Course[]     @relation("CourseInstructor")
-  enrollments       Enrollment[]
-  assignments       Assignment[]
-  submissions       Submission[]
-  grades            Grade[]
-  announcements     Announcement[]
-  courseMaterials   CourseMaterial[]
+  id              String           @id @default(cuid())
+  email           String           @unique
+  name            String
+  role            Role             @default(STUDENT)
+  avatar          String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  password        String
+  announcements   Announcement[]
+  assignments     Assignment[]
+  courseMaterials CourseMaterial[]
+  taughtCourses   Course[]         @relation("CourseInstructor")
+  enrollments     Enrollment[]
+  grades          Grade[]
+  submissions     Submission[]
+  chatMemberships ChatMember[]
+  sentMessages    ChatMessage[]
 
   @@map("users")
 }
 
 model Course {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  coverImage  String?
-  credits     Int      @default(3)
-  capacity    Int?
-  classNumber String?
-  isAvailableForEnrollment Boolean @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  instructorId String
-  instructor   User         @relation("CourseInstructor", fields: [instructorId], references: [id])
-  enrollments  Enrollment[]
-  assignments  Assignment[]
-  announcements Announcement[]
-  schedule     CourseSchedule?
-  requirements CourseRequirement[]
-  materials    CourseMaterial[]
+  id                       String              @id @default(cuid())
+  title                    String
+  description              String
+  coverImage               String?
+  credits                  Int                 @default(3)
+  capacity                 Int?
+  createdAt                DateTime            @default(now())
+  updatedAt                DateTime            @updatedAt
+  instructorId             String
+  classNumber              String?
+  isAvailableForEnrollment Boolean             @default(false)
+  announcements            Announcement[]
+  assignments              Assignment[]
+  materials                CourseMaterial[]
+  requirements             CourseRequirement[]
+  schedules                CourseSchedule[]
+  instructor               User                @relation("CourseInstructor", fields: [instructorId], references: [id])
+  enrollments              Enrollment[]
+  chatRooms                ChatRoom[]
 
   @@map("courses")
 }
 
 model CourseSchedule {
-  id        String @id @default(cuid())
-  courseId  String @unique
-  dayOfWeek Int    // 0 = Sunday, 1 = Monday, etc.
-  startTime String // Format: "HH:MM"
-  endTime   String // Format: "HH:MM"
+  id        String  @id @default(cuid())
+  courseId  String
+  dayOfWeek Int
+  startTime String
+  endTime   String
   room      String?
-
-  // Relations
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@map("course_schedules")
 }
 
 model Enrollment {
-  id        String   @id @default(cuid())
-  studentId String
-  courseId  String
+  id         String   @id @default(cuid())
+  studentId  String
+  courseId   String
   enrolledAt DateTime @default(now())
-
-  // Relations
-  student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  course  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student    User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, courseId])
   @@map("enrollments")
 }
 
 model Assignment {
-  id          String    @id @default(cuid())
-  courseId    String
-  title       String
-  description String
-  dueDate     DateTime
-  maxPoints   Int       @default(100)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  // Relations
-  course      Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  instructor  User        @relation(fields: [instructorId], references: [id])
+  id           String       @id @default(cuid())
+  courseId     String
+  title        String
+  description  String
+  dueDate      DateTime
+  maxPoints    Int          @default(100)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   instructorId String
-  submissions Submission[]
-  grades      Grade[]
+  course       Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  instructor   User         @relation(fields: [instructorId], references: [id])
+  grades       Grade[]
+  submissions  Submission[]
 
   @@map("assignments")
 }
 
 model Submission {
-  id           String    @id @default(cuid())
+  id           String     @id @default(cuid())
   assignmentId String
   studentId    String
   content      String
-  submittedAt  DateTime  @default(now())
-
-  // Relations
-  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  student    User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  grade      Grade?
+  submittedAt  DateTime   @default(now())
+  grade        Grade?
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student      User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([assignmentId, studentId])
   @@map("submissions")
 }
 
 model Grade {
-  id           String    @id @default(cuid())
+  id           String      @id @default(cuid())
   assignmentId String
   studentId    String
   points       Int
   maxPoints    Int
   feedback     String?
-  gradedAt     DateTime  @default(now())
-
-  // Relations
-  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  student    User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  submission Submission? @relation(fields: [submissionId], references: [id])
-  submissionId String?   @unique
+  gradedAt     DateTime    @default(now())
+  submissionId String?     @unique
+  assignment   Assignment  @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student      User        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  submission   Submission? @relation(fields: [submissionId], references: [id])
 
   @@unique([assignmentId, studentId])
   @@map("grades")
@@ -150,10 +135,8 @@ model Announcement {
   authorId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  // Relations
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  author User   @relation(fields: [authorId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@map("announcements")
 }
@@ -169,60 +152,111 @@ model CourseMaterial {
   fileUrl     String
   uploadedBy  String
   uploadedAt  DateTime @default(now())
-
-  // Relations
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  uploader User @relation(fields: [uploadedBy], references: [id])
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  uploader    User     @relation(fields: [uploadedBy], references: [id])
 
   @@map("course_materials")
 }
 
 model DegreeProgram {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
+  id                   String              @id @default(cuid())
+  name                 String
+  description          String?
   totalCreditsRequired Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  requirements DegreeRequirement[]
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  requirements         DegreeRequirement[]
 
   @@map("degree_programs")
 }
 
 model DegreeRequirement {
-  id                String   @id @default(cuid())
-  degreeProgramId   String
-  category          String
-  categoryName      String
-  description       String?
-  requiredCredits   Int
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // Relations
-  degreeProgram DegreeProgram @relation(fields: [degreeProgramId], references: [id], onDelete: Cascade)
-  courses       CourseRequirement[]
+  id              String              @id @default(cuid())
+  degreeProgramId String
+  category        String
+  categoryName    String
+  description     String?
+  requiredCredits Int
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  courses         CourseRequirement[]
+  degreeProgram   DegreeProgram       @relation(fields: [degreeProgramId], references: [id], onDelete: Cascade)
 
   @@map("degree_requirements")
 }
 
 model CourseRequirement {
-  id                   String @id @default(cuid())
-  degreeRequirementId  String
-  courseId             String
-
-  // Relations
-  degreeRequirement DegreeRequirement @relation(fields: [degreeRequirementId], references: [id], onDelete: Cascade)
-  course            Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  id                  String            @id @default(cuid())
+  degreeRequirementId String
+  courseId            String
+  course              Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  degreeRequirement   DegreeRequirement @relation(fields: [degreeRequirementId], references: [id], onDelete: Cascade)
 
   @@unique([degreeRequirementId, courseId])
   @@map("course_requirements")
+}
+
+model ChatRoom {
+  id        String   @id @default(cuid())
+  name      String
+  type      ChatType @default(DIRECT)
+  courseId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  course     Course?      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  members    ChatMember[]
+  messages   ChatMessage[]
+
+  @@map("chat_rooms")
+}
+
+model ChatMember {
+  id        String   @id @default(cuid())
+  userId    String
+  chatId    String
+  joinedAt  DateTime @default(now())
+  isActive  Boolean  @default(true)
+
+  // Relations
+  user User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chat ChatRoom @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, chatId])
+  @@map("chat_members")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  chatId    String
+  senderId  String
+  content   String
+  messageType MessageType @default(TEXT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  chat   ChatRoom @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  sender User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
 }
 
 enum Role {
   STUDENT
   TEACHER
   ADMIN
+}
+
+enum ChatType {
+  DIRECT
+  GROUP
+  COURSE
+}
+
+enum MessageType {
+  TEXT
+  FILE
+  IMAGE
 }

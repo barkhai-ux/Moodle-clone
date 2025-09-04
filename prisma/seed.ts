@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -49,21 +49,6 @@ async function main() {
   });
 
   // Create some test courses
-  const course1 = await prisma.course.upsert({
-    where: { id: 'course1' },
-    update: {},
-    create: {
-      id: 'course1',
-      title: 'Introduction to Computer Science',
-      description: 'Learn the fundamentals of computer science and programming.',
-      coverImage: 'https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg',
-      credits: 3,
-      capacity: 30,
-      classNumber: 'CS101',
-      instructorId: teacher.id,
-      isAvailableForEnrollment: true,
-    },
-  });
 
   const course2 = await prisma.course.upsert({
     where: { id: 'course2' },
@@ -113,85 +98,265 @@ async function main() {
     },
   });
 
-  // Create course schedules
-  await prisma.courseSchedule.upsert({
-    where: { courseId: course1.id },
+  const course5 = await prisma.course.upsert({
+    where: { id: 'course5' },
     update: {},
     create: {
-      courseId: course1.id,
-      dayOfWeek: 1, // Monday
-      startTime: '09:00',
-      endTime: '10:30',
-      room: 'CS-101',
+      id: 'course5',
+      title: 'Basics of Management',
+      description: 'Introduction to management principles and organizational behavior.',
+      coverImage: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg',
+      credits: 3,
+      capacity: 35,
+      classNumber: 'BUS101',
+      instructorId: teacher.id,
+      isAvailableForEnrollment: true,
     },
   });
 
-  await prisma.courseSchedule.upsert({
-    where: { courseId: course2.id },
+  const course6 = await prisma.course.upsert({
+    where: { id: 'course6' },
     update: {},
     create: {
+      id: 'course6',
+      title: 'College Algebra',
+      description: 'Fundamental algebraic concepts and problem-solving techniques.',
+      coverImage: 'https://images.pexels.com/photos/590570/pexels-photo-590570.jpeg',
+      credits: 3,
+      capacity: 40,
+      classNumber: 'MATH101',
+      instructorId: teacher.id,
+      isAvailableForEnrollment: true,
+    },
+  });
+
+  const course7 = await prisma.course.upsert({
+    where: { id: 'course7' },
+    update: {},
+    create: {
+      id: 'course7',
+      title: 'Business Ethics',
+      description: 'Ethical decision-making in business contexts.',
+      coverImage: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg',
+      credits: 3,
+      capacity: 30,
+      classNumber: 'BUS201',
+      instructorId: teacher.id,
+      isAvailableForEnrollment: true,
+    },
+  });
+
+  const course8 = await prisma.course.upsert({
+    where: { id: 'course8' },
+    update: {},
+    create: {
+      id: 'course8',
+      title: 'Statistics for Business',
+      description: 'Statistical methods and their applications in business.',
+      coverImage: 'https://images.pexels.com/photos/590570/pexels-photo-590570.jpeg',
+      credits: 4,
+      capacity: 25,
+      classNumber: 'STAT201',
+      instructorId: teacher.id,
+      isAvailableForEnrollment: true,
+    },
+  });
+
+  const course9 = await prisma.course.upsert({
+    where: { id: 'course9' },
+    update: {},
+    create: {
+      id: 'course9',
+      title: 'Database Systems',
+      description: 'Introduction to database design and management.',
+      coverImage: 'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg',
+      credits: 3,
+      capacity: 25,
+      classNumber: 'CS401',
+      instructorId: teacher.id,
+      isAvailableForEnrollment: true,
+    },
+  });
+
+  const course10 = await prisma.course.upsert({
+    where: { id: 'course10' },
+    update: {},
+    create: {
+      id: 'course10',
+      title: 'Marketing Principles',
+      description: 'Fundamental marketing concepts and strategies.',
+      coverImage: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg',
+      credits: 3,
+      capacity: 30,
+      classNumber: 'BUS301',
+      instructorId: teacher.id,
+      isAvailableForEnrollment: true,
+    },
+  });
+
+  const course11 = await prisma.course.upsert({
+    where: { id: 'course11' },
+    update: {},
+    create: {
+      id: 'course11',
+      title: 'Introduction to Psychology',
+      description: 'Basic principles of psychology and human behavior.',
+      coverImage: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg',
+      credits: 3,
+      capacity: 35,
+      classNumber: 'PSY101',
+      instructorId: teacher.id,
+      isAvailableForEnrollment: true,
+    },
+  });
+
+  const course12 = await prisma.course.upsert({
+    where: { id: 'course12' },
+    update: {},
+    create: {
+      id: 'course12',
+      title: 'Physical Chemistry',
+      description: 'Advanced chemistry concepts with mathematical foundations.',
+      coverImage: 'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg',
+      credits: 4,
+      capacity: 20,
+      classNumber: 'CHEM301',
+      instructorId: teacher.id,
+      isAvailableForEnrollment: true,
+    },
+  });
+
+  // Create course schedules - multiple courses can be in same time slot
+
+  await prisma.courseSchedule.create({
+    data: {
       courseId: course2.id,
       dayOfWeek: 2, // Tuesday
-      startTime: '10:00',
-      endTime: '11:30',
-      room: 'CS-201',
-    },
-  });
-
-  await prisma.courseSchedule.upsert({
-    where: { courseId: course3.id },
-    update: {},
-    create: {
-      courseId: course3.id,
-      dayOfWeek: 3, // Wednesday
-      startTime: '14:00',
-      endTime: '15:30',
+      startTime: '08:00',
+      endTime: '09:30',
       room: 'CS-102',
     },
   });
 
-  await prisma.courseSchedule.upsert({
-    where: { courseId: course4.id },
-    update: {},
-    create: {
+  await prisma.courseSchedule.create({
+    data: {
+      courseId: course3.id,
+      dayOfWeek: 3, // Wednesday
+      startTime: '09:40',
+      endTime: '11:10',
+      room: 'CS-102',
+    },
+  });
+
+  await prisma.courseSchedule.create({
+    data: {
       courseId: course4.id,
       dayOfWeek: 4, // Thursday
-      startTime: '11:00',
-      endTime: '12:30',
+      startTime: '09:40',
+      endTime: '11:10',
       room: 'CS-202',
     },
   });
 
+  await prisma.courseSchedule.create({
+    data: {
+      courseId: course5.id,
+      dayOfWeek: 3, // Wednesday
+      startTime: '08:00',
+      endTime: '09:30',
+      room: 'BUS-201',
+    },
+  });
+
+  await prisma.courseSchedule.create({
+    data: {
+      courseId: course6.id,
+      dayOfWeek: 4, // Thursday
+      startTime: '08:00',
+      endTime: '09:30',
+      room: 'MATH-201',
+    },
+  });
+
+  await prisma.courseSchedule.create({
+    data: {
+      courseId: course7.id,
+      dayOfWeek: 1, // Monday
+      startTime: '09:40',
+      endTime: '11:10',
+      room: 'BUS-202',
+    },
+  });
+
+  await prisma.courseSchedule.create({
+    data: {
+      courseId: course8.id,
+      dayOfWeek: 2, // Tuesday
+      startTime: '09:40',
+      endTime: '11:10',
+      room: 'MATH-202',
+    },
+  });
+
+  await prisma.courseSchedule.create({
+    data: {
+      courseId: course9.id,
+      dayOfWeek: 1, // Monday
+      startTime: '09:40',
+      endTime: '11:10',
+      room: 'CS-201',
+    },
+  });
+
+  await prisma.courseSchedule.create({
+    data: {
+      courseId: course10.id,
+      dayOfWeek: 2, // Tuesday
+      startTime: '09:40',
+      endTime: '11:10',
+      room: 'BUS-203',
+    },
+  });
+
+  // Add overlapping courses to demonstrate multiple courses in same time slot
+  await prisma.courseSchedule.create({
+    data: {
+      courseId: course11.id,
+      dayOfWeek: 2, // Tuesday - same time as course8 and course10 but different room
+      startTime: '09:40',
+      endTime: '11:10',
+      room: 'PSY-101',
+    },
+  });
+
+  await prisma.courseSchedule.create({
+    data: {
+      courseId: course12.id,
+      dayOfWeek: 3, // Wednesday - same time as course3 and course5 but different room
+      startTime: '09:40',
+      endTime: '11:10',
+      room: 'CHEM-201',
+    },
+  });
+  
   // Enroll student in courses
-  await prisma.enrollment.upsert({
-    where: { 
-      studentId_courseId: {
-        studentId: student.id,
-        courseId: course1.id,
-      }
-    },
-    update: {},
-    create: {
-      studentId: student.id,
-      courseId: course1.id,
-    },
+  await prisma.enrollment.createMany({
+    data: [
+      { studentId: student.id, courseId: course2.id },
+      { studentId: student.id, courseId: course4.id },
+      { studentId: student.id, courseId: course5.id },
+      { studentId: student.id, courseId: course6.id },
+      { studentId: student.id, courseId: course7.id },
+      { studentId: student.id, courseId: course8.id },
+      { studentId: student.id, courseId: course9.id },
+      { studentId: student.id, courseId: course10.id },
+      { studentId: student.id, courseId: course11.id },
+      { studentId: student.id, courseId: course12.id },
+    ],
+    skipDuplicates: true,
   });
 
   // Create test assignments
-  const assignment1 = await prisma.assignment.upsert({
-    where: { id: 'assignment1' },
-    update: {},
-    create: {
-      id: 'assignment1',
-      courseId: course1.id,
-      instructorId: teacher.id,
-      title: 'Algorithm Design Project',
-      description: 'Design and implement a sorting algorithm with time complexity analysis.',
-      dueDate: new Date('2024-02-15T23:59:00Z'),
-      maxPoints: 100,
-    },
-  });
-
   const assignment2 = await prisma.assignment.upsert({
     where: { id: 'assignment2' },
     update: {},
@@ -234,30 +399,59 @@ async function main() {
     },
   });
 
-  // Create test grades
-  await prisma.grade.upsert({
-    where: { id: 'grade1' },
-    update: {},
-    create: {
-      id: 'grade1',
-      assignmentId: assignment1.id,
-      studentId: student.id,
-      points: 85,
-      maxPoints: 100,
-      feedback: 'Excellent work on the algorithm implementation. Consider optimizing the space complexity.',
+  // Create test chat rooms
+  const chatRoom1 = await prisma.chatRoom.create({
+    data: {
+      name: 'General Discussion',
+      type: 'GROUP',
+      members: {
+        create: [
+          { userId: student.id, isActive: true },
+          { userId: teacher.id, isActive: true },
+        ],
+      },
     },
   });
 
-  // Create test announcements
-  await prisma.announcement.upsert({
-    where: { id: 'announcement1' },
-    update: {},
-    create: {
-      id: 'announcement1',
-      courseId: course1.id,
-      authorId: teacher.id,
-      title: 'Midterm Exam Schedule',
-      content: 'The midterm exam will be held on February 25th at 2:00 PM in Room 101.',
+  const chatRoom2 = await prisma.chatRoom.create({
+    data: {
+      name: 'Course Discussion',
+      type: 'COURSE',
+      courseId: course2.id,
+      members: {
+        create: [
+          { userId: student.id, isActive: true },
+          { userId: teacher.id, isActive: true },
+        ],
+      },
+    },
+  });
+
+  // Create some test messages
+  await prisma.chatMessage.create({
+    data: {
+      chatId: chatRoom1.id,
+      senderId: teacher.id,
+      content: 'Welcome everyone to the general discussion!',
+      messageType: 'TEXT',
+    },
+  });
+
+  await prisma.chatMessage.create({
+    data: {
+      chatId: chatRoom1.id,
+      senderId: student.id,
+      content: 'Hello! I have a question about the course materials.',
+      messageType: 'TEXT',
+    },
+  });
+
+  await prisma.chatMessage.create({
+    data: {
+      chatId: chatRoom2.id,
+      senderId: teacher.id,
+      content: 'This is the course-specific chat for Advanced Mathematics.',
+      messageType: 'TEXT',
     },
   });
 
@@ -266,6 +460,7 @@ async function main() {
   console.log(`- Teacher: teacher@example.com (password: password123)`);
   console.log(`- Student: student@example.com (password: password123)`);
   console.log(`- Admin: admin@example.com (password: password123)`);
+  console.log('Chat rooms created for testing!');
 }
 
 main()

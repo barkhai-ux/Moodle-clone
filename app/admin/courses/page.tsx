@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Navigation } from '@/components/layout/Navigation';
-import { CourseManagement } from '@/components/courses/CourseManagement';
+import { AdminWeeklySchedule } from '@/components/courses/AdminWeeklySchedule';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminCoursesPage() {
@@ -26,16 +26,16 @@ export default function AdminCoursesPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navigation currentPage="courses" />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="w-full px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Course Management</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Course Scheduling</h1>
             <p className="text-gray-600 dark:text-gray-300">
-              Manage which courses are available for student enrollment
+              Schedule all courses in the weekly timetable
             </p>
           </div>
 
-          <CourseManagement />
+          <AdminWeeklySchedule className="w-full" />
         </div>
       </main>
     </div>

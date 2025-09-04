@@ -29,7 +29,7 @@ export async function GET(
             },
           },
         },
-        schedule: true,
+        schedules: true,
       },
     });
 
@@ -50,7 +50,7 @@ export async function GET(
       coverImage: course.coverImage,
       createdAt: course.createdAt.toISOString(),
       updatedAt: course.updatedAt.toISOString(),
-      schedule: course.schedule,
+      schedules: course.schedules,
       credits: course.credits,
       capacity: course.capacity,
       classNumber: course.classNumber,
@@ -77,7 +77,7 @@ export async function PUT(
     // Check if course exists
     const existingCourse = await prisma.course.findUnique({
       where: { id: params.id },
-      include: { schedule: true },
+      include: { schedules: true },
     });
 
     if (!existingCourse) {
@@ -120,35 +120,27 @@ export async function PUT(
             },
           },
         },
-        schedule: true,
+        schedules: true,
       },
     });
 
     // Handle schedule update if provided
     if (schedule) {
-      if (existingCourse.schedule) {
-        // Update existing schedule
-        await prisma.courseSchedule.update({
-          where: { courseId: params.id },
-          data: {
-            dayOfWeek: schedule.dayOfWeek,
-            startTime: schedule.startTime,
-            endTime: schedule.endTime,
-            room: schedule.room || null,
-          },
-        });
-      } else {
-        // Create new schedule
-        await prisma.courseSchedule.create({
-          data: {
-            courseId: params.id,
-            dayOfWeek: schedule.dayOfWeek,
-            startTime: schedule.startTime,
-            endTime: schedule.endTime,
-            room: schedule.room || null,
-          },
-        });
-      }
+      // Delete existing schedules for this course
+      await prisma.courseSchedule.deleteMany({
+        where: { courseId: params.id },
+      });
+      
+      // Create new schedule
+      await prisma.courseSchedule.create({
+        data: {
+          courseId: params.id,
+          dayOfWeek: schedule.dayOfWeek,
+          startTime: schedule.startTime,
+          endTime: schedule.endTime,
+          room: schedule.room || null,
+        },
+      });
     }
 
     // Fetch the updated course with schedule
@@ -175,7 +167,7 @@ export async function PUT(
             },
           },
         },
-        schedule: true,
+        schedules: true,
       },
     });
 
@@ -189,7 +181,7 @@ export async function PUT(
       coverImage: finalCourse!.coverImage,
       createdAt: finalCourse!.createdAt.toISOString(),
       updatedAt: finalCourse!.updatedAt.toISOString(),
-      schedule: finalCourse!.schedule,
+      schedules: finalCourse!.schedules,
       credits: finalCourse!.credits,
       capacity: finalCourse!.capacity,
       classNumber: finalCourse!.classNumber,

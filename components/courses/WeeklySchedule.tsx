@@ -19,7 +19,10 @@ const DAYS_OF_WEEK = [
 ];
 
 const TIME_SLOTS = [
-  '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'
+  { start: '08:00', end: '09:30' },
+  { start: '09:40', end: '11:10' },
+  { start: '11:40', end: '13:10' },
+  { start: '13:20', end: '14:50' }
 ];
 
 export function WeeklySchedule({ courses, enrolledCourseIds, onEnrollmentChange }: WeeklyScheduleProps) {
@@ -37,11 +40,14 @@ export function WeeklySchedule({ courses, enrolledCourseIds, onEnrollmentChange 
     setSelectedCourse(null);
   };
 
-  const getCoursesForTimeSlot = (day: number, timeSlot: string) => {
+  const getCoursesForTimeSlot = (day: number, timeSlot: { start: string; end: string }) => {
     return courses.filter(course => {
-      if (!course.schedule) return false;
-      return course.schedule.dayOfWeek === day && 
-             course.schedule.startTime === timeSlot;
+      if (!course.schedules || course.schedules.length === 0) return false;
+      return course.schedules.some(schedule => 
+        schedule.dayOfWeek === day && 
+        schedule.startTime === timeSlot.start &&
+        schedule.endTime === timeSlot.end
+      );
     });
   };
 
@@ -70,7 +76,7 @@ export function WeeklySchedule({ courses, enrolledCourseIds, onEnrollmentChange 
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Weekly Schedule</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">University Schedule</h2>
           <p className="text-gray-600 dark:text-gray-300">Click on courses to view details and enroll</p>
         </div>
         <div className="flex space-x-2">
@@ -92,7 +98,7 @@ export function WeeklySchedule({ courses, enrolledCourseIds, onEnrollmentChange 
             <table className="w-full">
               <thead>
                 <tr className="border-b">
-                  <th className="w-20 p-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400">Time</th>
+                  <th className="w-24 p-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400">Period</th>
                   {DAYS_OF_WEEK.map((day, index) => (
                     <th key={day} className="w-32 p-3 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
                       {day}
@@ -102,36 +108,38 @@ export function WeeklySchedule({ courses, enrolledCourseIds, onEnrollmentChange 
               </thead>
               <tbody>
                 {TIME_SLOTS.map((timeSlot) => (
-                  <tr key={timeSlot} className="border-b last:border-b-0">
+                  <tr key={timeSlot.start} className="border-b last:border-b-0">
                     <td className="p-3 text-sm font-medium text-gray-500 dark:text-gray-400">
-                      {timeSlot}
+                      <div className="text-center">
+                        <div className="font-semibold">{timeSlot.start}</div>
+                        <div className="text-xs opacity-75">{timeSlot.end}</div>
+                      </div>
                     </td>
                     {DAYS_OF_WEEK.map((_, dayIndex) => {
                       const coursesInSlot = getCoursesForTimeSlot(dayIndex, timeSlot);
                       return (
-                        <td key={dayIndex} className="p-2 align-top">
+                        <td key={dayIndex} className="p-1 align-top min-h-[100px]">
                           <div className="space-y-1">
                             {coursesInSlot.map((course) => {
                               const status = getCourseStatus(course);
                               return (
                                 <div
                                   key={course.id}
-                                  className={`p-2 rounded-lg border cursor-pointer transition-all hover:shadow-md ${getStatusColor(status)}`}
+                                  className={`p-1.5 rounded border cursor-pointer transition-all hover:shadow-sm ${getStatusColor(status)}`}
                                   onClick={() => handleCourseClick(course)}
                                 >
-                                  <div className="text-xs font-medium truncate">
+                                  <div className="text-xs font-medium truncate leading-tight">
                                     {course.title}
                                   </div>
-                                  <div className="text-xs opacity-75 truncate">
-                                    {course.schedule?.room}
+                                  <div className="text-xs opacity-75 truncate leading-tight">
+                                    {course.schedules?.find(s => 
+                                      s.dayOfWeek === dayIndex && 
+                                      s.startTime === timeSlot.start && 
+                                      s.endTime === timeSlot.end
+                                    )?.room} • {course.classNumber}
                                   </div>
-                                  <div className="flex items-center justify-between mt-1">
-                                    <div className="text-xs">
-                                      {course.schedule?.startTime} - {course.schedule?.endTime}
-                                    </div>
-                                    <div className="text-xs">
-                                      {course.enrolledStudents.length}/{course.capacity || 0}
-                                    </div>
+                                  <div className="text-xs opacity-75 mt-0.5">
+                                    {course.enrolledStudents.length}/{course.capacity || 0}
                                   </div>
                                 </div>
                               );

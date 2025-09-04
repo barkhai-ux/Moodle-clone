@@ -468,4 +468,150 @@ export class DataService {
       return false;
     }
   }
+
+  // Course schedule management methods
+  static async updateCourseSchedule(courseId: string, schedule: {
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
+    room: string;
+  }): Promise<boolean> {
+    try {
+      console.log('DataService: Sending schedule request for course:', courseId, schedule);
+      
+      const response = await fetch(`/api/admin/courses/${courseId}/schedule`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(schedule),
+      });
+
+      console.log('DataService: Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('DataService: Error response:', errorData);
+        throw new Error(`Failed to update course schedule: ${errorData.error || response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('DataService: Success response:', data);
+      return true;
+    } catch (error) {
+      console.error('Error updating course schedule:', error);
+      return false;
+    }
+  }
+
+  static async removeCourseSchedule(courseId: string): Promise<boolean> {
+    try {
+      const response = await fetch(`/api/admin/courses/${courseId}/schedule`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) throw new Error('Failed to remove course schedule');
+      
+      return true;
+    } catch (error) {
+      console.error('Error removing course schedule:', error);
+      return false;
+    }
+  }
+
+  // Chat methods
+  static async getChatRooms(params?: { userId?: string; courseId?: string }): Promise<any[]> {
+    try {
+      const searchParams = new URLSearchParams();
+      if (params?.userId) searchParams.append('userId', params.userId);
+      if (params?.courseId) searchParams.append('courseId', params.courseId);
+
+      const response = await fetch(`/api/chat/rooms?${searchParams.toString()}`);
+      if (!response.ok) throw new Error('Failed to fetch chat rooms');
+      
+      const data = await response.json();
+      const chatRooms = data.chatRooms || [];
+      
+      // Ensure each chat room has the required properties
+      return chatRooms.map((chat: any) => ({
+        ...chat,
+        members: chat.members || [],
+        messages: chat.messages || [],
+      }));
+    } catch (error) {
+      console.error('Error fetching chat rooms:', error);
+      return [];
+    }
+  }
+
+  static async createChatRoom(chatRoom: { name: string; type: string; courseId?: string; memberIds: string[] }): Promise<any | null> {
+    try {
+      const response = await fetch('/api/chat/rooms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(chatRoom),
+      });
+
+      if (!response.ok) throw new Error('Failed to create chat room');
+      
+      const data = await response.json();
+      return data.chatRoom;
+    } catch (error) {
+      console.error('Error creating chat room:', error);
+      return null;
+    }
+  }
+
+  static async getMessages(params?: { chatId?: string; limit?: number; offset?: number }): Promise<any[]> {
+    try {
+      const searchParams = new URLSearchParams();
+      if (params?.chatId) searchParams.append('chatId', params.chatId);
+      if (params?.limit) searchParams.append('limit', params.limit.toString());
+      if (params?.offset) searchParams.append('offset', params.offset.toString());
+
+      const response = await fetch(`/api/chat/messages?${searchParams.toString()}`);
+      if (!response.ok) throw new Error('Failed to fetch messages');
+      
+      const data = await response.json();
+      return data.messages || [];
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      return [];
+    }
+  }
+
+  static async sendMessage(message: { chatId: string; senderId: string; content: string; messageType?: string }): Promise<any | null> {
+    try {
+      const response = await fetch('/api/chat/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(message),
+      });
+
+      if (!response.ok) throw new Error('Failed to send message');
+      
+      const data = await response.json();
+      return data.message;
+    } catch (error) {
+      console.error('Error sending message:', error);
+      return null;
+    }
+  }
+
+  static async getUsers(): Promise<User[]> {
+    try {
+      const response = await fetch('/api/users');
+      if (!response.ok) throw new Error('Failed to fetch users');
+      
+      const data = await response.json();
+      return data.users || [];
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      return [];
+    }
+  }
 }

@@ -10,6 +10,10 @@ if [ -z "$DATABASE_URL" ]; then
     echo "Warning: DATABASE_URL is not set. Build will continue but database operations may fail."
 fi
 
+# Install dependencies
+echo "Installing dependencies..."
+npm ci
+
 # Generate Prisma client
 echo "Generating Prisma client..."
 npx prisma generate

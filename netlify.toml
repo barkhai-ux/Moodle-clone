@@ -3,7 +3,7 @@
   publish = ".next"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
   # Prevent dependency lifecycle scripts (e.g. prepare/postinstall) from running during install.
   # Some packages try to run `rollup -c` in prepare, which fails on Netlify.
   # We generate Prisma client explicitly in the build command, so this is safe.

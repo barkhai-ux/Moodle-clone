@@ -1,11 +1,13 @@
 [build]
-  command = "npm run build"
+  command = "npm run netlify-build"
   publish = ".next"
 
 [build.environment]
   NODE_VERSION = "18"
   NPM_FLAGS = "--version"
   PRISMA_GENERATE_SKIP_AUTOINSTALL = "true"
+  # Use pooled connection string for Prisma in serverless
+  # DATABASE_URL and DIRECT_URL must be set in Netlify UI
 
 # Use Netlify's Next.js plugin
 [[plugins]]

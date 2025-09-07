@@ -13,6 +13,7 @@ try {
     errorFormat: 'pretty',
     datasources: {
       db: {
+        // Neon serverless: use pooled URL for serverless functions
         url: process.env.DATABASE_URL,
       },
     },

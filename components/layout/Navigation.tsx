@@ -28,7 +28,8 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import Link from 'next/link';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { LanguageToggle } from '@/components/ui/language-toggle';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface NavigationProps {
   currentPage?: string;
@@ -37,34 +38,35 @@ interface NavigationProps {
 export function Navigation({ currentPage }: NavigationProps) {
   const { user, logout } = useAuth();
   const { totalUnreadCount } = useNotifications();
+  const { t } = useI18n();
 
   if (!user) return null;
 
   const adminNavItems = [
-    { href: '/dashboard', icon: Home, label: 'Dashboard', key: 'dashboard' },
-    { href: '/admin/degree-audit', icon: FileText, label: 'Degree Audit', key: 'degree-audit' },
-    { href: '/admin/users', icon: Users, label: 'All Users', key: 'users' },
-    { href: '/admin/courses', icon: BookOpen, label: 'All Courses', key: 'courses' },
-    { href: '/admin/grades', icon: BarChart3, label: 'All Grades', key: 'grades' },
+    { href: '/dashboard', icon: Home, label: t('nav.dashboard', 'Dashboard'), key: 'dashboard' },
+    { href: '/admin/degree-audit', icon: FileText, label: t('nav.degreeAudit', 'Degree Audit'), key: 'degree-audit' },
+    { href: '/admin/users', icon: Users, label: t('nav.users', 'All Users'), key: 'users' },
+    { href: '/admin/courses', icon: BookOpen, label: t('nav.courses', 'All Courses'), key: 'courses' },
+    { href: '/admin/grades', icon: BarChart3, label: t('nav.grades', 'All Grades'), key: 'grades' },
   ];
 
   const teacherNavItems = [
-    { href: '/dashboard', icon: Home, label: 'Dashboard', key: 'dashboard' },
-    { href: '/courses', icon: BookOpen, label: 'My Courses', key: 'courses' },
-    { href: '/students', icon: Users, label: 'Students', key: 'students' },
-    { href: '/assignments', icon: ClipboardList, label: 'Assignments', key: 'assignments' },
-    { href: '/grades', icon: BarChart3, label: 'Grades', key: 'grades' },
-    { href: '/chat', icon: MessageSquare, label: 'Chat', key: 'chat' },
+    { href: '/dashboard', icon: Home, label: t('nav.dashboard', 'Dashboard'), key: 'dashboard' },
+    { href: '/courses', icon: BookOpen, label: t('nav.courses', 'My Courses'), key: 'courses' },
+    { href: '/students', icon: Users, label: t('nav.students', 'Students'), key: 'students' },
+    { href: '/assignments', icon: ClipboardList, label: t('nav.assignments', 'Assignments'), key: 'assignments' },
+    { href: '/grades', icon: BarChart3, label: t('nav.grades', 'Grades'), key: 'grades' },
+    { href: '/chat', icon: MessageSquare, label: t('nav.chat', 'Chat'), key: 'chat' },
   ];
 
   const studentNavItems = [
-    { href: '/dashboard', icon: Home, label: 'Dashboard', key: 'dashboard' },
-    { href: '/courses', icon: BookOpen, label: 'My Courses', key: 'courses' },
-    { href: '/courses/enroll', icon: BookOpen, label: 'Enroll in Courses', key: 'enroll' },
-    { href: '/degree-audit', icon: FileText, label: 'Degree Audit', key: 'degree-audit' },
-    { href: '/assignments', icon: ClipboardList, label: 'Assignments', key: 'assignments' },
-    { href: '/grades', icon: BarChart3, label: 'My Grades', key: 'grades' },
-    { href: '/chat', icon: MessageSquare, label: 'Chat', key: 'chat' },
+    { href: '/dashboard', icon: Home, label: t('nav.dashboard', 'Dashboard'), key: 'dashboard' },
+    { href: '/courses', icon: BookOpen, label: t('nav.courses', 'My Courses'), key: 'courses' },
+    { href: '/courses/enroll', icon: BookOpen, label: t('nav.enroll', 'Enroll'), key: 'enroll' },
+    { href: '/degree-audit', icon: FileText, label: t('nav.degreeAudit', 'Degree Audit'), key: 'degree-audit' },
+    { href: '/assignments', icon: ClipboardList, label: t('nav.assignments', 'Assignments'), key: 'assignments' },
+    { href: '/grades', icon: BarChart3, label: t('nav.grades', 'My Grades'), key: 'grades' },
+    { href: '/chat', icon: MessageSquare, label: t('nav.chat', 'Chat'), key: 'chat' },
   ];
 
   const getNavItems = () => {
@@ -95,7 +97,7 @@ export function Navigation({ currentPage }: NavigationProps) {
   const themeColor = getThemeColor();
 
   return (
-    <nav className={`${themeColor} text-white shadow-lg dark:shadow-gray-900/20`}>
+    <nav className={`${themeColor} text-white/95 backdrop-blur supports-[backdrop-filter]:bg-opacity-90 shadow-lg dark:shadow-gray-900/20 fixed top-0 left-0 right-0 z-40`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
@@ -104,32 +106,34 @@ export function Navigation({ currentPage }: NavigationProps) {
               <span className="text-xl font-bold">EduPortal</span>
             </Link>
             
-            <div className="hidden md:flex space-x-4">
-              {navItems.map((item) => {
-                const isActive = currentPage === item.key;
-                return (
-                  <Link
-                    key={item.key}
-                    href={item.href}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative ${
-                      isActive
-                        ? 'bg-white/20'
-                        : 'hover:bg-white/10'
-                    }`}
-                  >
-                    <item.icon className="w-4 h-4" />
-                    <span>{item.label}</span>
-                    {item.key === 'chat' && totalUnreadCount > 0 && (
-                      <NotificationBadge count={totalUnreadCount} size="sm" />
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
+            {user.role !== 'STUDENT' && (
+              <div className="hidden md:flex space-x-4">
+                {navItems.map((item) => {
+                  const isActive = currentPage === item.key;
+                  return (
+                    <Link
+                      key={item.key}
+                      href={item.href}
+                      className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative ${
+                        isActive
+                          ? 'bg-white/20'
+                          : 'hover:bg-white/10'
+                      }`}
+                    >
+                      <item.icon className="w-4 h-4" />
+                      <span>{item.label}</span>
+                      {item.key === 'chat' && totalUnreadCount > 0 && (
+                        <NotificationBadge count={totalUnreadCount} size="sm" />
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center space-x-2">
-            <ThemeToggle />
+            <LanguageToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">

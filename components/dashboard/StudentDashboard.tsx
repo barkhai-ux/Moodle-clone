@@ -31,9 +31,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Course, Assignment, Grade } from '@/types';
 import { AvatarSelector } from '@/components/ui/avatar-selector';
 import Link from 'next/link';
+import { useI18n } from '@/contexts/I18nContext';
 
 export function StudentDashboard() {
   const { user, updateAvatar } = useAuth();
+  const { t } = useI18n();
   const [courses, setCourses] = useState<Course[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [grades, setGrades] = useState<Grade[]>([]);
@@ -199,7 +201,7 @@ export function StudentDashboard() {
       <div className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white rounded-lg p-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-2xl font-bold mb-2">Welcome back, {user?.name || 'Student'}!</h1>
+            <h1 className="text-2xl font-bold mb-2">{t('dashboard.welcome', 'Welcome back, {{name}}!').replace('{{name}}', user?.name || 'Student')}</h1>
             <p className="text-teal-100">Ready to continue your learning journey?</p>
           </div>
         </div>
@@ -272,7 +274,7 @@ export function StudentDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <AlertCircle className="w-5 h-5 text-orange-500" />
-                  <span>Upcoming Assignments</span>
+                  <span>{t('dashboard.upcomingAssignments', 'Upcoming Assignments')}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -313,7 +315,7 @@ export function StudentDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <BarChart3 className="w-5 h-5 text-green-500" />
-                  <span>Recent Grades</span>
+                  <span>{t('dashboard.recentGrades', 'Recent Grades')}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -355,7 +357,7 @@ export function StudentDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <BookOpen className="w-5 h-5 text-blue-500" />
-                <span>My Courses</span>
+                <span>{t('dashboard.myCourses', 'My Courses')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>

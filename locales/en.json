@@ -1,0 +1,18 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "courses": "My Courses",
+    "enroll": "Enroll",
+    "degreeAudit": "Degree Audit",
+    "assignments": "Assignments",
+    "grades": "My Grades",
+    "chat": "Chat"
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {{name}}!",
+    "upcomingAssignments": "Upcoming Assignments",
+    "recentGrades": "Recent Grades",
+    "myCourses": "My Courses"
+  }
+}
+

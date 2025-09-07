@@ -1,0 +1,18 @@
+{
+  "nav": {
+    "dashboard": "Хянах самбар",
+    "courses": "Миний хичээлүүд",
+    "enroll": "Хичээл сонгох",
+    "degreeAudit": "Голч дүн шалгах",
+    "assignments": "Бие даалтууд",
+    "grades": "Миний дүн",
+    "chat": "Чат"
+  },
+  "dashboard": {
+    "welcome": "Тавтай морил, {{name}}!",
+    "upcomingAssignments": "Бие даалтууд",
+    "recentGrades": "Сүүлийн дүн",
+    "myCourses": "Миний хичээлүүд"
+  }
+}
+

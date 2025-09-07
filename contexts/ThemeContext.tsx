@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'light' | 'dark' | 'system';
+type Theme = 'light';
 
 interface ThemeContextType {
   theme: Theme;
@@ -13,53 +13,19 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('system');
+  // Force light mode only
+  const [theme, setTheme] = useState<Theme>('light');
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    // Load theme from localStorage
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    }
-  }, []);
-
-  useEffect(() => {
     const root = window.document.documentElement;
-    
-    // Remove existing theme classes
-    root.classList.remove('light', 'dark');
-    
-    let newResolvedTheme: 'light' | 'dark';
-    
-    if (theme === 'system') {
-      newResolvedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    } else {
-      newResolvedTheme = theme;
-    }
-    
-    setResolvedTheme(newResolvedTheme);
-    root.classList.add(newResolvedTheme);
-    
-    // Save theme to localStorage
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const handleChange = () => {
-      if (theme === 'system') {
-        const newResolvedTheme = mediaQuery.matches ? 'dark' : 'light';
-        setResolvedTheme(newResolvedTheme);
-        window.document.documentElement.classList.remove('light', 'dark');
-        window.document.documentElement.classList.add(newResolvedTheme);
-      }
-    };
-    
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme]);
+    root.classList.remove('dark');
+    root.classList.add('light');
+    setResolvedTheme('light');
+    try {
+      localStorage.setItem('theme', 'light');
+    } catch {}
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>

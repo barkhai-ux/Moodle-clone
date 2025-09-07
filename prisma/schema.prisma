@@ -25,7 +25,9 @@ model User {
   grades          Grade[]
   submissions     Submission[]
   chatMemberships ChatMember[]
-  sentMessages    ChatMessage[]
+  sentMessages    Message[]
+  deletedMessages Message[] @relation("MessageDeletedBy")
+  readReceipts    ReadReceipt[]
 
   @@map("users")
 }
@@ -197,17 +199,18 @@ model CourseRequirement {
 }
 
 model ChatRoom {
-  id        String   @id @default(cuid())
-  name      String
-  type      ChatType @default(DIRECT)
-  courseId  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  name       String
+  type       ChatType @default(DIRECT)
+  courseId   String?
+  isPrivate  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   // Relations
   course     Course?      @relation(fields: [courseId], references: [id], onDelete: Cascade)
   members    ChatMember[]
-  messages   ChatMessage[]
+  messages   Message[]
 
   @@map("chat_rooms")
 }
@@ -227,20 +230,35 @@ model ChatMember {
   @@map("chat_members")
 }
 
-model ChatMessage {
-  id        String   @id @default(cuid())
-  chatId    String
-  senderId  String
-  content   String
-  messageType MessageType @default(TEXT)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Message {
+  id          String   @id @default(cuid())
+  roomId      String
+  senderId    String
+  body        String
+  createdAt   DateTime @default(now())
+  deletedById String?
 
   // Relations
-  chat   ChatRoom @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  sender User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  room        ChatRoom     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  sender      User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  deletedBy   User?        @relation("MessageDeletedBy", fields: [deletedById], references: [id])
+  readReceipts ReadReceipt[]
 
-  @@map("chat_messages")
+  @@map("messages")
+}
+
+model ReadReceipt {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  // Relations
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@map("read_receipts")
 }
 
 enum Role {
@@ -255,8 +273,3 @@ enum ChatType {
   COURSE
 }
 
-enum MessageType {
-  TEXT
-  FILE
-  IMAGE
-}

@@ -428,30 +428,27 @@ async function main() {
   });
 
   // Create some test messages
-  await prisma.chatMessage.create({
+  await prisma.message.create({
     data: {
-      chatId: chatRoom1.id,
+      roomId: chatRoom1.id,
       senderId: teacher.id,
-      content: 'Welcome everyone to the general discussion!',
-      messageType: 'TEXT',
+      body: 'Welcome everyone to the general discussion!',
     },
   });
 
-  await prisma.chatMessage.create({
+  await prisma.message.create({
     data: {
-      chatId: chatRoom1.id,
+      roomId: chatRoom1.id,
       senderId: student.id,
-      content: 'Hello! I have a question about the course materials.',
-      messageType: 'TEXT',
+      body: 'Hello! I have a question about the course materials.',
     },
   });
 
-  await prisma.chatMessage.create({
+  await prisma.message.create({
     data: {
-      chatId: chatRoom2.id,
+      roomId: chatRoom2.id,
       senderId: teacher.id,
-      content: 'This is the course-specific chat for Advanced Mathematics.',
-      messageType: 'TEXT',
+      body: 'This is the course-specific chat for Advanced Mathematics.',
     },
   });
 

@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Upload, File, X, Plus } from 'lucide-react';
 import { DataService } from '@/lib/data-service';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface MaterialUploadProps {
   courseId: string;
@@ -16,6 +17,7 @@ interface MaterialUploadProps {
 }
 
 export function MaterialUpload({ courseId, onUploadComplete }: MaterialUploadProps) {
+  const { user } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -59,7 +61,7 @@ export function MaterialUpload({ courseId, onUploadComplete }: MaterialUploadPro
       const success = await DataService.uploadCourseMaterial(courseId, selectedFile, {
         title: materialData.title,
         description: materialData.description
-      });
+      }, user?.id || '');
 
       if (success) {
         setSelectedFile(null);

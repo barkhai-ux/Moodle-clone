@@ -232,7 +232,7 @@ export function CourseManagement({ className }: CourseManagementProps) {
                 <div className="flex items-center space-x-4">
                   <Checkbox
                     checked={selectedCourses.includes(course.id)}
-                    onCheckedChange={(checked) => handleSelectCourse(course.id, checked)}
+                    onCheckedChange={(checked) => handleSelectCourse(course.id, !!checked)}
                     disabled={updating}
                   />
                   <div className="flex-1">

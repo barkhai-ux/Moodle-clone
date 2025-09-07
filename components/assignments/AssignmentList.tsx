@@ -15,7 +15,7 @@ interface AssignmentListProps {
 
 export function AssignmentList({ assignments, courses }: AssignmentListProps) {
   const { user } = useAuth();
-  const isTeacher = user?.role === 'teacher';
+  const isTeacher = user?.role === 'TEACHER';
 
   const getCourse = (courseId: string) => 
     courses.find(c => c.id === courseId);

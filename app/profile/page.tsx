@@ -81,7 +81,7 @@ export default function ProfilePage() {
       return 0.0;
     });
     
-    const average = gradePoints.reduce((sum, points) => sum + points, 0) / gradePoints.length;
+    const average = gradePoints.reduce((sum: number, points) => sum + points, 0) / gradePoints.length;
     return average.toFixed(2);
   };
 
@@ -108,7 +108,7 @@ export default function ProfilePage() {
 
   const getCourseStats = () => {
     const completedCourses = grades.length > 0 ? 
-      [...new Set(grades.map(grade => grade.courseId))].length : 0;
+      Array.from(new Set(grades.map(grade => grade.courseId))).length : 0;
     
     return {
       totalEnrolled: courses.length,

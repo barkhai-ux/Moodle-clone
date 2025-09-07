@@ -124,14 +124,31 @@ export interface ChatMember {
   chat: ChatRoom;
 }
 
-export interface ChatMessage {
+export interface Message {
   id: string;
-  chatId: string;
+  roomId: string;
   senderId: string;
+  body: string;
+  createdAt: string;
+  deletedById?: string;
+  sender: User;
+  room: ChatRoom;
+  readReceipts?: ReadReceipt[];
+}
+
+export interface ReadReceipt {
+  id: string;
+  messageId: string;
+  userId: string;
+  createdAt: string;
+  user?: User;
+}
+
+// Keep the old interface for backward compatibility
+export interface ChatMessage extends Message {
+  chatId: string;
   content: string;
   messageType: 'TEXT' | 'FILE' | 'IMAGE';
-  createdAt: string;
   updatedAt: string;
-  sender: User;
   chat: ChatRoom;
 }

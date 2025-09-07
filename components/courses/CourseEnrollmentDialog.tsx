@@ -122,7 +122,7 @@ export function CourseEnrollmentDialog({
           {/* Course Details Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Schedule Information */}
-            {course.schedule && (
+            {course.schedules && course.schedules.length > 0 && (
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-2 mb-3">
@@ -130,20 +130,24 @@ export function CourseEnrollmentDialog({
                     <h3 className="font-semibold text-gray-900 dark:text-white">Schedule</h3>
                   </div>
                   <div className="space-y-2 text-sm">
-                    <div className="flex items-center space-x-2">
-                      <Clock className="w-4 h-4 text-gray-500" />
-                      <span className="text-gray-600 dark:text-gray-300">
-                        {DAYS_OF_WEEK[course.schedule.dayOfWeek]} • {formatTime(course.schedule.startTime)} - {formatTime(course.schedule.endTime)}
-                      </span>
-                    </div>
-                    {course.schedule.room && (
-                      <div className="flex items-center space-x-2">
-                        <MapPin className="w-4 h-4 text-gray-500" />
-                        <span className="text-gray-600 dark:text-gray-300">
-                          {course.schedule.room}
-                        </span>
+                    {course.schedules.map((schedule, index) => (
+                      <div key={index} className="space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <Clock className="w-4 h-4 text-gray-500" />
+                          <span className="text-gray-600 dark:text-gray-300">
+                            {DAYS_OF_WEEK[schedule.dayOfWeek]} • {formatTime(schedule.startTime)} - {formatTime(schedule.endTime)}
+                          </span>
+                        </div>
+                        {schedule.room && (
+                          <div className="flex items-center space-x-2">
+                            <MapPin className="w-4 h-4 text-gray-500" />
+                            <span className="text-gray-600 dark:text-gray-300">
+                              {schedule.room}
+                            </span>
+                          </div>
+                        )}
                       </div>
-                    )}
+                    ))}
                   </div>
                 </CardContent>
               </Card>

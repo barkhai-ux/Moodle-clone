@@ -69,14 +69,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
           const lastReadTime = localStorage.getItem(`lastRead_${chat.id}_${user.id}`);
           
           if (lastReadTime) {
-            const unreadMessages = chat.messages.filter(msg => 
+            const unreadMessages = chat.messages.filter((msg: any) => 
               new Date(msg.createdAt) > new Date(lastReadTime) && 
               msg.senderId !== user.id
             );
             counts[chat.id] = unreadMessages.length;
           } else {
             // If no last read time, count all messages not sent by current user
-            const unreadMessages = chat.messages.filter(msg => msg.senderId !== user.id);
+            const unreadMessages = chat.messages.filter((msg: any) => msg.senderId !== user.id);
             counts[chat.id] = unreadMessages.length;
           }
         } else {

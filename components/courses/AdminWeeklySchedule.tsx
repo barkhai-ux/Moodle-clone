@@ -221,6 +221,7 @@ export function AdminWeeklySchedule({ className }: AdminWeeklyScheduleProps) {
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Weekly Schedule */}
+
       <Card className="min-h-[800px]">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">

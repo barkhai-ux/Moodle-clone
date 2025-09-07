@@ -15,7 +15,7 @@ interface CourseCardProps {
 
 export function CourseCard({ course }: CourseCardProps) {
   const { user } = useAuth();
-  const isTeacher = user?.role === 'teacher';
+  const isTeacher = user?.role === 'TEACHER';
   const [imageError, setImageError] = useState(false);
 
   return (

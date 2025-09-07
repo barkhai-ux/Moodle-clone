@@ -55,6 +55,9 @@ export async function GET(request: NextRequest) {
             createdAt: 'desc',
           },
           take: 1,
+          where: {
+            deletedById: null, // Only show non-deleted messages
+          },
           include: {
             sender: {
               select: {

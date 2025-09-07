@@ -22,7 +22,14 @@ export async function GET(request: NextRequest) {
 
     const grades = await prisma.grade.findMany({
       where: whereClause,
-      include: {
+      select: {
+        id: true,
+        studentId: true,
+        assignmentId: true,
+        points: true,
+        maxPoints: true,
+        feedback: true,
+        gradedAt: true,
         student: {
           select: {
             id: true,
@@ -54,7 +61,7 @@ export async function GET(request: NextRequest) {
       points: grade.points,
       maxPoints: grade.maxPoints,
       feedback: grade.feedback,
-      createdAt: grade.createdAt.toISOString(),
+      createdAt: grade.gradedAt.toISOString(),
       student: grade.student,
       assignment: grade.assignment,
       course: grade.assignment.course,
@@ -122,7 +129,7 @@ export async function POST(request: NextRequest) {
       points: grade.points,
       maxPoints: grade.maxPoints,
       feedback: grade.feedback,
-      createdAt: grade.createdAt.toISOString(),
+      createdAt: grade.gradedAt.toISOString(),
       student: grade.student,
       assignment: grade.assignment,
       course: grade.assignment.course,

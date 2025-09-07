@@ -15,9 +15,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const messages = await prisma.chatMessage.findMany({
+    const messages = await prisma.message.findMany({
       where: {
-        chatId: chatId,
+        roomId: chatId,
+        deletedById: null, // Only show non-deleted messages
       },
       include: {
         sender: {
@@ -27,6 +28,12 @@ export async function GET(request: NextRequest) {
             email: true,
             avatar: true,
             role: true,
+          },
+        },
+        readReceipts: {
+          select: {
+            userId: true,
+            createdAt: true,
           },
         },
       },
@@ -75,12 +82,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const message = await prisma.chatMessage.create({
+    // Basic validation
+    if (!content || content.trim().length === 0) {
+      return NextResponse.json(
+        { error: 'Message content cannot be empty' },
+        { status: 400 }
+      );
+    }
+
+    if (content.length > 2000) {
+      return NextResponse.json(
+        { error: 'Message too long. Maximum 2000 characters allowed.' },
+        { status: 400 }
+      );
+    }
+
+    const message = await prisma.message.create({
       data: {
-        chatId,
+        roomId: chatId,
         senderId,
-        content,
-        messageType,
+        body: content,
       },
       include: {
         sender: {
@@ -90,6 +111,12 @@ export async function POST(request: NextRequest) {
             email: true,
             avatar: true,
             role: true,
+          },
+        },
+        readReceipts: {
+          select: {
+            userId: true,
+            createdAt: true,
           },
         },
       },

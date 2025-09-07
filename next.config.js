@@ -11,17 +11,12 @@ const nextConfig = {
   trailingSlash: false,
   // Disable static optimization during build
   generateEtags: false,
-  // Netlify specific configuration
-  output: 'standalone',
-  // Ensure API routes work properly
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: '/api/:path*',
-      },
-    ];
+  // Disable image optimization for better compatibility
+  images: {
+    unoptimized: true,
   },
+  // Ensure proper asset handling
+  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
 };
 
 module.exports = nextConfig;

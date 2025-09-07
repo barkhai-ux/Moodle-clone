@@ -12,6 +12,20 @@ export const prisma = globalForPrisma.prisma ?? new PrismaClient({
       url: process.env.DATABASE_URL,
     },
   },
+  // Add connection pooling and timeout configurations
+  __internal: {
+    engine: {
+      connectTimeout: 60000,
+      queryTimeout: 30000,
+    },
+  },
 });
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+
+// Handle graceful shutdown
+if (typeof window === 'undefined') {
+  process.on('beforeExit', async () => {
+    await prisma.$disconnect();
+  });
+}

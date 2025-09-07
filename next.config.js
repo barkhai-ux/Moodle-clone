@@ -6,9 +6,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  swcMinify: false,
+  swcMinify: true,
+  productionBrowserSourceMaps: true,
   experimental: {
-    forceSwcTransforms: false,
+    forceSwcTransforms: true,
   },
   // Skip static generation for pages that use dynamic features
   trailingSlash: false,
